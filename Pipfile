@@ -10,6 +10,7 @@ django = "*"
 django-q = "*"
 google-api-python-client = "*"
 djangorestframework = "*"
+django-cors-headers = "*"
 
 [requires]
 python_version = "3.8"

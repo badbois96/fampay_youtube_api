@@ -35,11 +35,11 @@ def index(request):
 
 def get_videos(request):
     query_title = request.GET.get('q')
-    query_desc = request.GET.get('q')
+    query_desc = request.GET.get('desc')
     page_number = int(request.GET.get('page'))
 
     query_title_string = ""
-    if len(query_title) > 0:
+    if query_title is not None and len(query_title) > 0:
         query_title_string = "and ("
         for item in query_title.split(' '):
             query_title_string += f" title like '%{item}%' or"
@@ -47,28 +47,27 @@ def get_videos(request):
         query_title_string = query_title_string[:-3] + ")"
 
     query_desc_string = ""
-    if len(query_desc) > 0:
+    if query_desc is not None and len(query_desc) > 0:
         query_desc_string = "and ("
-        for item in query_title.split(' '):
+        for item in query_desc.split(' '):
             query_desc_string += f" description like '%{item}%' or"
 
         query_desc_string = query_desc_string[:-3] + ")"
 
-    final_query = f"SELECT * from search_api_youtube where 1=1 {query_title_string} {query_desc_string}"
-    print(final_query)
+    final_query = r"""SELECT * from search_api_youtube where 1=1 %s %s"""
 
     try:
-        search_results = Youtube.objects.raw(final_query)
-        for rs in search_results:
-            print(rs)
-        # search_results = Youtube.objects.filter(title__icontains='messi')
+        # search_results = Youtube.objects.raw(final_query, [query_title_string, query_desc_string])
+        search_results = Youtube.objects.filter(title__icontains=query_title if query_title is not None else ''
+                                                , description__contains=query_desc if query_desc is not None else '')\
+            .order_by('-published_at')
 
-        # paginator = Paginator(search_results, 25)
-        # page_obj = paginator.get_page(page_number)
-        #
-        # serialized_results = YoutubeSerializer(page_obj.object_list, many=True)
+        paginator = Paginator(search_results, 25)
+        page_obj = paginator.get_page(page_number)
 
-        return JsonResponse({"result": 'serialized_results.data'})
+        serialized_results = YoutubeSerializer(page_obj.object_list, many=True)
+
+        return JsonResponse({"result": serialized_results.data})
     except Exception as e:
         logging.error(e)
         return JsonResponse({"success": "failed", "result": e})
