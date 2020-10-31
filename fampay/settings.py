@@ -123,7 +123,7 @@ YT_BACKGROUND_JOB = {
         '',
         'AIzaSyD5piej94pnJO_VJKvPXVczkm3Kjzsmjas',
         ''
-    ]
+    ],
 }
 
 

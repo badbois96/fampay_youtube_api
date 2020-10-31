@@ -15,13 +15,21 @@ class SearchApiConfig(AppConfig):
             job_name = settings.YT_BACKGROUND_JOB['name']
             func = settings.YT_BACKGROUND_JOB['func_name']
 
-            # if Schedule.objects.filter(name=job_name).count() == 0:
-            #     Schedule.objects.create(
-            #         name=job_name,
-            #         func=func,
-            #         schedule_type=Schedule.HOURLY,
-            #     )
-            #     logging.info('%s Job scheduled', job_name)
+            if Schedule.objects.filter(name=job_name).count() == 0:
+                '''
+                Checking if the same job is already exists and running in Django-Q cluster
+                If not then create a new record with an interval value of 5 minutes (default) 
+                
+                https://django-q.readthedocs.io/en/latest/schedules.html
+                '''
+
+                Schedule.objects.create(
+                    name=job_name,
+                    func=func,
+                    minutes=5,
+                    schedule_type=Schedule.MINUTES,
+                )
+                logging.info('%s Job scheduled', job_name)
 
         except ImportError as e:
             logging.error(e)
