@@ -14,6 +14,7 @@ interface IState {
     query: string,
     description: string,
     page: number,
+    maxPage: number,
     dataList: Array<any>,
     dataLoaded: boolean
 }
@@ -27,7 +28,8 @@ export default class Dashboard extends Component<{}, IState> {
             description: "",
             page: 1,
             dataList: [],
-            dataLoaded: false
+            dataLoaded: false,
+            maxPage: Infinity
         }
     }
 
@@ -42,12 +44,19 @@ export default class Dashboard extends Component<{}, IState> {
                 // console.log(res.data['result']);
                 this.setState({
                     dataLoaded: true,
-                    dataList: res.data['result']
+                    dataList: res.data['result'],
+                    maxPage: res.data['total_page']
                 });
             })
             .catch(error => {
                 console.error(error);
             });
+    }
+
+    newSearch = () => {
+        this.setState({
+            page: 1
+        }, this.fetchData);
     }
 
     prev = () => {
@@ -69,8 +78,8 @@ export default class Dashboard extends Component<{}, IState> {
     }
 
     render() {
-        const { dataList, dataLoaded } = this.state;
-        // console.log(typeof (dataList));
+        const { dataList, dataLoaded, page, maxPage } = this.state;
+
         return (
             <div className="jumbotron jumbotron-fluid bg-transparent m-0">
                 <h3 className="display-4 pb-5">Youtube API</h3>
@@ -82,7 +91,7 @@ export default class Dashboard extends Component<{}, IState> {
                             value={this.state.query}
                         />
                         <div className="input-group-append">
-                            <button className="btn btn-outline-secondary" type="button" onClick={this.fetchData}>Search</button>
+                            <button className="btn btn-outline-secondary" type="button" onClick={this.newSearch}>Search</button>
                         </div>
                     </div>
                     <div className="list-group">
@@ -97,10 +106,10 @@ export default class Dashboard extends Component<{}, IState> {
                     </div>
                     <div className="input-group justify-content-center mt-3">
                         <div className="input-group-append">
-                            <button className="btn btn-outline-secondary" type="button" onClick={this.prev}>Prev</button>
+                            <button className="btn btn-outline-secondary" type="button" disabled={page < 2} onClick={this.prev}>Prev</button>
                         </div>
                         <div className="input-group-append">
-                            <button className="btn btn-outline-secondary" type="button" onClick={this.next}>Next</button>
+                            <button className="btn btn-outline-secondary" type="button" disabled={page >= maxPage} onClick={this.next}>Next</button>
                         </div>
                     </div>
                 </div>

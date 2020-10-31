@@ -1,12 +1,28 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django_q.models import Schedule
 from django_q.tasks import async_task
 import logging
 from django.core.paginator import Paginator
 from search_api.models import Youtube
 from search_api.serializers import YoutubeSerializer
+import os
+from django.conf import settings
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(module)s [%(levelname)s] %(message)s')
+
+
+def web_page(requst):
+    try:
+        with open(os.path.join(settings.REACT_APP_DIR, 'build', 'index.html')) as f:
+            return HttpResponse(f.read())
+    except FileNotFoundError:
+        logging.exception('Production build of app not found')
+        return HttpResponse(
+            """
+            Contact with Admin.
+            """,
+            status=404,
+        )
 
 
 def index(request):
@@ -59,7 +75,7 @@ def get_videos(request):
     try:
         # search_results = Youtube.objects.raw(final_query, [query_title_string, query_desc_string])
         search_results = Youtube.objects.filter(title__icontains=query_title if query_title is not None else ''
-                                                , description__contains=query_desc if query_desc is not None else '')\
+                                                , description__contains=query_title if query_title is not None else '')\
             .order_by('-published_at')
 
         paginator = Paginator(search_results, 25)
@@ -67,7 +83,7 @@ def get_videos(request):
 
         serialized_results = YoutubeSerializer(page_obj.object_list, many=True)
 
-        return JsonResponse({"result": serialized_results.data})
+        return JsonResponse({"result": serialized_results.data, "total_page": paginator.num_pages})
     except Exception as e:
         logging.error(e)
         return JsonResponse({"success": "failed", "result": e})
