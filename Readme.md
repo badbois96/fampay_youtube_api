@@ -10,6 +10,7 @@ publishing date-time from YouTube for a given tag/search query in a paginated re
  - `python manage.py makemigrations`
  - `python manage.py createcachetable`
  - `python manage.py migrate`
+ - `python manage.py startservice`
  - Install LTS version of Node from https://nodejs.org/en/
  - `cd frontend/`
  - `npm i`
