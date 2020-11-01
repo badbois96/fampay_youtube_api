@@ -4,6 +4,8 @@ from django.conf import settings
 import requests
 from requests.models import Response
 from datetime import datetime, timezone, timedelta
+import os
+import json
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(module)s [%(levelname)s] %(message)s')
 
@@ -16,8 +18,12 @@ def background_update():
     :return: None
     '''
 
-    DEVELOPER_KEYS = settings.YT_BACKGROUND_JOB['api_keys']
     search_query = settings.YT_BACKGROUND_JOB['search_query']
+    developer_keys_path = os.path.join(settings.BASE_DIR, 'keys.json')
+
+    with open(developer_keys_path, 'rb') as keys_file:
+        DEVELOPER_KEYS_OBJECT = json.load(keys_file)
+        DEVELOPER_KEYS = DEVELOPER_KEYS_OBJECT["yt_api_keys"]
 
     part = "snippet"
     maxResults = 50
@@ -28,7 +34,7 @@ def background_update():
     try:
         '''
         Support for supplying multiple API keys so that if quota is exhausted on one, new API_KEY will be picked up
-         automatically from the list of API Keys provided in settings.py 
+         automatically from the list of API Keys provided in settings.py
         '''
         for developer_key in DEVELOPER_KEYS:
             response = fetch_data(developer_key=developer_key,
@@ -42,6 +48,7 @@ def background_update():
                 '''
                 if request results in 400, then new API_KEY will be picked up
                 '''
+                logging.warning(f"{developer_key} Expired.")
                 continue
 
             if response.status_code == 200:
@@ -77,7 +84,8 @@ def background_update():
     logging.info(f"Database updated with {count} new entries of {search_query}")
 
 
-def fetch_data(developer_key: str, part: str, order: str, search_query: str, maxResults: int, publishedAfter: str) -> Response:
+def fetch_data(developer_key: str, part: str, order: str, search_query: str, maxResults: int,
+               publishedAfter: str) -> Response:
     url = f"https://youtube.googleapis.com/youtube/v3/search?" \
           f"part={part}&" \
           f"maxResults={maxResults}&" \

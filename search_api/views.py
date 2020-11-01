@@ -1,6 +1,4 @@
 from django.http import JsonResponse, HttpResponse
-from django_q.models import Schedule
-from django_q.tasks import async_task
 import logging
 from django.core.paginator import Paginator
 from search_api.models import Youtube
@@ -37,6 +35,7 @@ def index(request):
     :param request:
     :return:
     '''
+
 
     json_payload = {"message": "hello world!"}
 

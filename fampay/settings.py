@@ -24,8 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'ukcnjvdm9(k$ib^n^ycgna)g@z$u6)!+_4y(na7c$cu8dh@hiz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+# DEBUG = True
+DEBUG = int(os.environ.get('DEBUG', default=1))
 
 CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ['*']
@@ -118,12 +118,6 @@ YT_BACKGROUND_JOB = {
     'name': 'YT_JOB',
     'search_query': 'music',
     'func_name': 'search_api.services.background_update',
-    'api_keys': [
-        '',
-        '',
-        'AIzaSyD5piej94pnJO_VJKvPXVczkm3Kjzsmjas',
-        ''
-    ],
 }
 
 

@@ -2,6 +2,19 @@
 To make an API to fetch latest videos sorted in reverse chronological order of their 
 publishing date-time from YouTube for a given tag/search query in a paginated response.
 
+## Docker Instructions
+#### Backend
+ - `docker build -t fampay .`
+ - `docker run -it -d -p 8000:80 fampay` Print container ID
+ - `docker exec -it <-put container ID here-> /bin/sh` Get interactive shell to container 
+ - `python manage.py qcluster` Starts django-Q cluster 
+#### Frontend
+ - Open new terminal/CMD 
+ - `cd frontend`
+ - `docker build -t frontend .`
+ - `docker run -it -d -p 3000:80 frontend`
+
+## Development
 ### How to <i>Setup</i>
  - Install Python 3.x from https://www.python.org/downloads
  - `pip install pipenv`
