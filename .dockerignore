@@ -1,0 +1,11 @@
+frontend
+pipfile
+Pipfile.lock
+Readme.md
+db.sqlite3
+.idea
+
+
+search_api/migrations/*.
+!search_api/migrations/__init__.py
+

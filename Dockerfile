@@ -1,35 +1,19 @@
 FROM python:3.8.6-alpine3.12 as pyt
 
 ENV PYTHONUNBUFFERED 1
+ENV LANG C.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /app
-
-ADD ./search_api search_api
-
-ADD ./fampay fampay
-
-ADD ./manage.py manage.py
-
-ADD ./requirements.txt requirements.txt
+ADD ./requirements.txt .
 
 RUN pip install -r requirements.txt
+ADD . .
+RUN python manage.py makemigrations \ 
+    && python manage.py createcachetable \
+    && python manage.py migrate \
+    && python manage.py startservice
 
-RUN python manage.py makemigrations
+EXPOSE 80
 
-RUN python manage.py createcachetable
-
-RUN python manage.py migrate
-
-ADD ./frontend/build /app/frontend/build
-
-FROM nginx
-
-RUN rm -rf /usr/share/nginx/html/*
-
-COPY --from=pyt /app/frontend/build /usr/share/nginx/html/
-
-ADD nginx.conf /etc/nginx/nginx.conf
-
-EXPOSE 80 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD gunicorn fampay.wsgi:application --bind 0.0.0.0:80
