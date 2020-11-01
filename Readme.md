@@ -15,7 +15,7 @@ publishing date-time from YouTube for a given tag/search query in a paginated re
  - `cd ./frontend`
  - `docker build -t frontend .`
  - `docker run -it -d -p 3000:80 frontend`
-
+ - Visit http://localhost:3000/ 
 ## Development
 ### How to <i>Setup</i>
  - Install Python 3.x from https://www.python.org/downloads
