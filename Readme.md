@@ -4,13 +4,15 @@ publishing date-time from YouTube for a given tag/search query in a paginated re
 
 ## Docker Instructions
 #### Backend
+ - Append your API_KEY to keys.json file which you obtained 
+ from https://console.developers.google.com/apis/api/youtube.googleapis.com/ 
  - `docker build -t fampay .`
  - `docker run -it -d -p 8000:80 fampay` Print container ID
  - `docker exec -it <-put container ID here-> /bin/sh` Get interactive shell to container 
  - `python manage.py qcluster` Starts django-Q cluster 
 #### Frontend
  - Open new terminal/CMD 
- - `cd frontend`
+ - `cd ./frontend`
  - `docker build -t frontend .`
  - `docker run -it -d -p 3000:80 frontend`
 
@@ -32,8 +34,8 @@ publishing date-time from YouTube for a given tag/search query in a paginated re
 #### Django
  - `cd fampay`
  - `touch settings.py`
- - Line 119: add your domain
- - Line 121: add your api_keys which you got 
+ - Line 119: add your search query for which the job will insert entries in database
+ - Append your API_KEY to keys.json file which you obtained 
  from https://console.developers.google.com/apis/api/youtube.googleapis.com/ 
 #### Node
  - `cd frontend`
