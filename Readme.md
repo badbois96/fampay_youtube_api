@@ -2,6 +2,14 @@
 To make an API to fetch latest videos sorted in reverse chronological order of their 
 publishing date-time from YouTube for a given tag/search query in a paginated response.
 
+## API Description
+ - To get all videos: http://localhost:8000/getvideos/?q=&page=
+ - To search with a query along with pagination: http://localhost:8000/getvideos/?q=mika%20singh&page=1
+ <br><br>
+ <b>Note:</b> By default I'm only fetching music videos from www.youtube.com in every 5 minutes. 
+   But you can change that by replacing the `'search_query': <your_tag>` at line 119 in settings.py
+   before firing the <a href="">Docker</a>
+   
 ## Docker Instructions
 #### Backend
  - Append your API_KEY to keys.json file which you obtained 
